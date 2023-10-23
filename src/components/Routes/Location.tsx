@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import { GetLocationByCode } from '@/api';
 
 function Location() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(true);
   const [location, setLocation] = useState({});
   const navigate = useNavigate();
