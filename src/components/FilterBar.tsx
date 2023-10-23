@@ -23,11 +23,11 @@ import {
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CreateLocation } from '@/api';
 import { useToast } from './ui/use-toast';
 
-function FilterBar() {
+function FilterBar({ code, setCode, setLocation }) {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
@@ -75,11 +75,15 @@ function FilterBar() {
 
   return (
     <>
-      <div className="flex justify-between">
+      <div className="flex justify-between px-4">
         <div className="flex gap-4">
-          <Input placeholder="Pesquisa por Código" />
-          <FilterButton title="Pesquisa por Estado" />
-          <FilterButton title="Pesquisa por Cidade" />
+          <Input
+            value={code}
+            onChange={({ target }) => {
+              setCode(target.value);
+            }}
+            placeholder="Pesquisa por Código"
+          />
         </div>
 
         <Dialog>

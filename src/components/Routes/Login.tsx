@@ -32,10 +32,39 @@ export const Login = () => {
   const navigate = useNavigate();
 
   const formSchema = z.object({
-    firstName: z.string(),
-    lastName: z.string(),
-    email: z.string(),
-    password: z.string(),
+    firstName: z
+      .string({
+        required_error: 'Digite um nome',
+      })
+      .min(1, { message: 'Digite um nome' }),
+    lastName: z
+      .string({
+        required_error: 'Digite um sobrenome',
+      })
+      .min(1, { message: 'Digite um sobrenome' }),
+    email: z
+      .string({
+        required_error: 'Digite um email',
+      })
+      .email({ message: 'Digite um email válido' }),
+    password: z
+      .string({
+        required_error: 'Digite uma senha',
+      })
+      .min(1, { message: 'Digite sua senha' }),
+  });
+
+  const formSchemaLogin = z.object({
+    email: z
+      .string({
+        required_error: 'Digite um email',
+      })
+      .email({ message: 'Digite um email válido' }),
+    password: z
+      .string({
+        required_error: 'Digite uma senha',
+      })
+      .min(1, { message: 'Digite sua senha' }),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -48,10 +77,18 @@ export const Login = () => {
     },
   });
 
-  async function handleLogin(values: z.infer<typeof formSchema>) {
+  const formLogin = useForm<z.infer<typeof formSchemaLogin>>({
+    resolver: zodResolver(formSchemaLogin),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  async function handleLogin(values: z.infer<typeof formSchemaLogin>) {
     const { url, options } = LoginUser(values);
-    console.log(values);
     setLoading(true);
+    setMessage('');
     try {
       const response = await fetch(url, options);
       const status = response.status;
@@ -86,6 +123,8 @@ export const Login = () => {
           'Não foi possível realizar o cadastro. Preencha todos os dados corretamente e tente novamente!!'
         );
       }
+
+      setMessage('Cadastro criado com sucesso. Faça Login');
     } catch (err) {
       setMessage(err.message);
     } finally {
@@ -134,8 +173,8 @@ export const Login = () => {
               <TabsTrigger value="password">Cadastro</TabsTrigger>
             </TabsList>
             <TabsContent value="account">
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(handleLogin)}>
+              <Form {...formLogin}>
+                <form onSubmit={formLogin.handleSubmit(handleLogin)}>
                   <Card>
                     <CardHeader className="space-y-1">
                       <CardTitle className="text-2xl">Fazer login</CardTitle>
@@ -157,7 +196,7 @@ export const Login = () => {
                       </div>
 
                       <FormField
-                        control={form.control}
+                        control={formLogin.control}
                         name="email"
                         render={({ field }) => (
                           <FormItem>
@@ -174,7 +213,7 @@ export const Login = () => {
                         )}
                       ></FormField>
                       <FormField
-                        control={form.control}
+                        control={formLogin.control}
                         name="password"
                         render={({ field }) => (
                           <FormItem>

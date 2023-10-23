@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Header from '../Header';
 
 import { LocationForm } from '../LocationForm';
@@ -10,9 +10,36 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../ui/tooltip';
+import { useEffect, useState } from 'react';
+import { GetLocationByCode } from '@/api';
 
 function Location() {
+  const [loading, setLoading] = useState(true);
+  const [location, setLocation] = useState({});
+  const navigate = useNavigate();
   const params = useParams();
+
+  useEffect(() => {
+    const token = window.localStorage.getItem('token');
+    if (token === null) {
+      navigate('/');
+    }
+
+    const code = params.id;
+
+    async function getLocationByCode(token, code) {
+      setLoading(true);
+      const { url, options } = GetLocationByCode(token, code);
+      const response = await fetch(url, options);
+      if (response.status === 400 || response.status === 500) return;
+
+      const data = await response.json();
+      setLocation(data);
+      setLoading(false);
+    }
+
+    getLocationByCode(token, code);
+  }, [navigate, params.id]);
   return (
     <>
       <Header />
@@ -35,7 +62,7 @@ function Location() {
             </TooltipProvider>
             Editar Localidade {params.id}
           </h2>
-          <LocationForm />
+          <LocationForm location={location} />
         </section>
       </main>
     </>

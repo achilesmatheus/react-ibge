@@ -58,3 +58,70 @@ export function CreateLocation(body, token) {
     },
   };
 }
+
+export function UpdateLocation(body, token) {
+  return {
+    url: API_URL + '/v2/ibge',
+    options: {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+      },
+      body: JSON.stringify({
+        id: body.id,
+        state: body.state,
+        city: body.city,
+      }),
+    },
+  };
+}
+
+export function DeleteLocation(id, token) {
+  return {
+    url: API_URL + '/v2/ibge?id=' + id,
+    options: {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+      },
+    },
+  };
+}
+
+export function GetLocations(token, skip, take) {
+  return {
+    url: API_URL + '/v2/ibge?' + `skip=${skip}&take=${take}`,
+    options: {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+    },
+  };
+}
+
+export function GetLocationByCode(token, code) {
+  return {
+    url: API_URL + '/v2/ibge/city/code/' + code,
+    options: {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+    },
+  };
+}
+
+export function GetLocationByState(token, state) {
+  return {
+    url: API_URL + '/v2/ibge/state/' + state,
+    options: {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+    },
+  };
+}
